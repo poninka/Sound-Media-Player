@@ -1,5 +1,6 @@
 ** Not started
 - Support for Mp3 files
+- Support for Ogg Vorbis files
 - Spotify API integration in players
 - Main file to lauch UI window
 - Pause/Play
