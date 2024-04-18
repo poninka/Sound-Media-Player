@@ -17,7 +17,7 @@ Classes Needed:
 - PlaybackController
 - PlayerAudioFileManager
 
-Variabals needed:
+Variables needed:
 
 - public audioLength (int)
 - public playbackStartingTime (int)
