@@ -12,6 +12,11 @@
 
 ** Completed
 
+Classes Needed:
+- PlayerUIClass
+- PlayerAudioFileClass
+- 
+
 Variabals needed:
 
 - public audioLength (int)
