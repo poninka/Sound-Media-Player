@@ -13,9 +13,9 @@
 ** Completed
 
 Classes Needed:
-- PlayerUIClass
-- PlayerAudioFileClass
-- 
+- PlayerUI
+- PlaybackController
+- PlayerAudioFileManager
 
 Variabals needed:
 
