@@ -3,7 +3,7 @@ Project Outline:
 1. Requirements Analysis
 Functional Requirements:
 Support for multiple media file formats.
-Play, pause, stop, and seek functionalities.
+Play, pause and seek functionalities.
 Display media information (e.g., duration, format, size).
 Non-Functional Requirements:
 The player should be user-friendly and responsive.
