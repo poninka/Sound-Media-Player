@@ -11,3 +11,9 @@
 ** In Progress
 
 ** Completed
+
+Variabals needed:
+
+- public audioLength (int)
+- public playbackStartingTime (int)
+- public pausePlayBool (boolean)
