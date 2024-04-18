@@ -20,6 +20,10 @@ public class PlaybackController {
 
 	 public void seek() {
 		 
+		  currentPos = playbackStartingTime;
+		 
+		 while(currentPos < audioLength) {
+			 currentPos++;
 	 }
 }
 
