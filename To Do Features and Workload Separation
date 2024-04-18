@@ -1,4 +1,5 @@
 ** Not started
+
 - Support for Mp3 files
 - Support for Ogg Vorbis files (Mainly For Spotify)
 - Spotify API integration in players
@@ -6,6 +7,7 @@
 - Pause/Play
 - Playbar
 - Play files in order
+
 ** In Progress
 
 ** Completed
