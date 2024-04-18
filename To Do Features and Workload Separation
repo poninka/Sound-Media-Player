@@ -22,3 +22,6 @@ Variabals needed:
 - public audioLength (int)
 - public playbackStartingTime (int)
 - public pausePlayBool (boolean)
+
+- Spotify API resources:
+https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
