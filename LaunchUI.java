@@ -1,44 +1,58 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import java.awt.Image;
+
 
 public class LaunchUI extends JFrame {
     private static final long serialVersionUID = -1702351704098547978L;
-	private JLabel titleLabel;
-    private JLabel artistLabel;
+	private JLabel titleDashArtist;
     private JLabel coverArtLabel;
+    private JSlider songSeekSlider;
 
     public LaunchUI() {
-        setTitle("Music Player");
+        setTitle("Kevin From Accounting");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 700);
 
         JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(new java.awt.Color(0,0,0,220));
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-        titleLabel = new JLabel("Title: ");
-        artistLabel = new JLabel("Artist: ");
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
-        mainPanel.add(artistLabel, BorderLayout.CENTER);
-
+        mainPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
+        
+        titleDashArtist = new JLabel("Error");
+        titleDashArtist.setForeground(Color.white);
+        titleDashArtist.setHorizontalAlignment(SwingConstants.CENTER);
+        titleDashArtist.setFont(new Font("Verdana", Font.BOLD, 20));
+        
         coverArtLabel = new JLabel();
         coverArtLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        mainPanel.add(coverArtLabel, BorderLayout.SOUTH);
+        
+        
+        songSeekSlider = new JSlider();
+        
+        mainPanel.add(titleDashArtist, BorderLayout.NORTH); 
+        mainPanel.add(coverArtLabel, BorderLayout.CENTER);
+        mainPanel.add(songSeekSlider, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);
     }
 
-    public void setSongInfo(String title, String artist, Image coverArt) {
-        titleLabel.setText("Title: " + title);
-        artistLabel.setText("Artist: " + artist);
-        coverArtLabel.setIcon(new ImageIcon(coverArt.getScaledInstance(200, 200, Image.SCALE_SMOOTH)));
+    public void setSongInfo(String title, String artist, String coverArtPath, int songLength) {
+    	titleDashArtist.setText(title + " - " + artist);
+    	songSeekSlider.setMaximum(songLength);
+    	ImageIcon icon = new ImageIcon(coverArtPath);
+        Image image = icon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        coverArtLabel.setIcon(new ImageIcon(image));
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new LaunchUI();
+        	LaunchUI ui = new LaunchUI();
+            ui.setSongInfo(/*"Song Title", "Artist Name",*/"The Walls", "Chase Alantic", "CoverArtDefault.jpeg", 200);
         });
     }
 }
