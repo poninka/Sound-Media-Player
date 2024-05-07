@@ -32,7 +32,9 @@ public class PlaybackController {
         // Update the isPlaying flag
         isPlaying = false;
     }
-    
+
+//Code not in use for now	
+/*	
     // Code to skip to the next track using the Spotify API
     public void forwardTrack() {
    
@@ -48,7 +50,8 @@ public class PlaybackController {
         songDataFetcher.fetchAndDisplaySongInfo("previous_track_id");
         resetSeekPosition();
     }
-    
+*/    
+	
     // Code to seek to the specified position in the current track using the Spotify API
     private void seekToPosition(int position) {
         
