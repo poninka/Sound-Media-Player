@@ -13,7 +13,7 @@ public class SongDataFetcher {
         //launchUI = new LaunchUI();
     }
 
-   public static void fetchAndDisplaySongInfo(String trackId) {
+   public void fetchAndDisplaySongInfo(String trackId) {
 
         String accessToken = spotifyApiClient.getAccessToken();
 
@@ -47,6 +47,7 @@ public class SongDataFetcher {
    
    public static void main(String args[]) {
 	   
-	   fetchAndDisplaySongInfo("3n3Ppam7vgaVa1iaRUc9Lp");
+	   SongDataFetcher songDataFetcher = new SongDataFetcher();
+	   songDataFetcher.fetchAndDisplaySongInfo("3n3Ppam7vgaVa1iaRUc9Lp");
    }
 }
