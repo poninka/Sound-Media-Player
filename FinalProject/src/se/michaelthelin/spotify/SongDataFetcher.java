@@ -47,7 +47,10 @@ public class SongDataFetcher {
    
    public static void main(String args[]) {
 	   
+	   SpotifySongSearcher spotifySongSearcher = new SpotifySongSearcher();
+	   String trackId = spotifySongSearcher.searchSong();
+	   
 	   SongDataFetcher songDataFetcher = new SongDataFetcher();
-	   songDataFetcher.fetchAndDisplaySongInfo("3n3Ppam7vgaVa1iaRUc9Lp");
+	   songDataFetcher.fetchAndDisplaySongInfo(trackId);
    }
 }
