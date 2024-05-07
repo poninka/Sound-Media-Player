@@ -38,12 +38,4 @@ public class SongDataFetcher {
             System.out.println("Failed to get access token from Spotify API.");
         }
     }
-
-    public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() -> {
-            SongDataFetcher songDataFetcher = new SongDataFetcher();
-            songDataFetcher.fetchAndDisplaySongInfo("3n3Ppam7vgaVa1iaRUc9Lp"); // Replace with a valid track ID
-        });
-    }
 }
