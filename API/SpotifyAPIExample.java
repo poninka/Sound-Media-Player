@@ -1,4 +1,5 @@
 //Example method to get an access token from Spotify
+//second comment added to test github
 public String getAccessToken() {
  String clientId = "your_client_id";  // Replace with your client ID
  String clientSecret = "your_client_secret";  // Replace with your client secret
