@@ -2,7 +2,6 @@ package se.michaelthelin.spotify;
 import okhttp3.*;
 import com.google.gson.Gson;
 import java.util.Base64;
-import java.util.Scanner;
  
 public class SpotifyApiClient {
  
@@ -16,22 +15,13 @@ public class SpotifyApiClient {
         SpotifyApiClient client = new SpotifyApiClient();
         String accessToken = client.getAccessToken();
         System.out.println("Access Token: " + accessToken);
-
-        // Ask the user for a song name
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter a song name to search for:");
-        String songName = scanner.nextLine();
-
-        // Search for the song and get the track ID
-        SpotifySongSearcher searcher = new SpotifySongSearcher();
-        String trackId = searcher.searchSong(accessToken, songName);
-
-        // Fetch and print the track data using the track ID
-        String trackData = client.getTrackData(accessToken, trackId);
+ 
+        // Example of fetching track data
+        String trackData = client.getTrackData(accessToken, "3n3Ppam7vgaVa1iaRUc9Lp"); // Replace with a valid track ID
         System.out.println("Track Data: " + trackData);
     }
  
-    protected String getAccessToken() {
+    private String getAccessToken() {
         try {
             String credentials = clientId + ":" + clientSecret;
             String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
@@ -56,7 +46,7 @@ public class SpotifyApiClient {
         }
     }
  
-    protected String getTrackData(String accessToken, String trackId) {
+    private String getTrackData(String accessToken, String trackId) {
         try {
             HttpUrl url = HttpUrl.parse(baseApiUrl + "/tracks/" + trackId).newBuilder().build();
             Request request = new Request.Builder()
