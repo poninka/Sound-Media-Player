@@ -6,16 +6,20 @@ import com.google.gson.JsonObject;
 public class SongDataFetcher {
 
     private static SpotifyApiClient spotifyApiClient;
+    private static SpotifySongSearcher spotifySongSearcher();
     //private LaunchUI launchUI;
 
     public SongDataFetcher() {
+	  
         spotifyApiClient = new SpotifyApiClient();
+	spotifySongSearcher = new SpotifySongSearcher();  
         //launchUI = new LaunchUI();
     }
 
    public void fetchAndDisplaySongInfo(String trackId) {
-
+	
         String accessToken = spotifyApiClient.getAccessToken();
+	String trackId = spotifySongSearcher.searchSong();
 
         if (accessToken != null) {
             String trackData = spotifyApiClient.getTrackData(accessToken, trackId);
@@ -46,10 +50,7 @@ public class SongDataFetcher {
     }
    
    public static void main(String args[]) {
-	   
-	   SpotifySongSearcher spotifySongSearcher = new SpotifySongSearcher();
-	   String trackId = spotifySongSearcher.searchSong();
-	   
+
 	   SongDataFetcher songDataFetcher = new SongDataFetcher();
 	   songDataFetcher.fetchAndDisplaySongInfo(trackId);
    }
