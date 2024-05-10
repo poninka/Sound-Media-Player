@@ -69,7 +69,7 @@ public class LaunchUI extends JFrame {
                     playPauseButton.setText("Play");
                     
                    // System.out.println("this plays when the song is paused");
-                   //add the code that starts that pauses the song from playing
+                   //add the code that pauses the song from playing
                     
                     stopTimer();
                 }
