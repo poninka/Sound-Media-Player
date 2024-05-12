@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import javax.swing.Timer;
 
 public class WAVLaunchUI extends JFrame {
     private static final long serialVersionUID = -1702351704098547978L;
@@ -17,28 +16,31 @@ public class WAVLaunchUI extends JFrame {
     private JLabel coverArtLabel;
     private JSlider songSeekSlider;
     private JButton playPauseButton;
+    private JButton selectSongButton;
     private JButton infoButton;
     private JLabel timeLabel;
     private Timer timer;
     private int currentTime;
    
-	AudioPlayer AudioFile = new AudioPlayer();
+	AudioManager AudioFile = new AudioManager();
 	
     public void connect(String inputFilePath) {
     	String fileType = AudioFile.getFileType(inputFilePath);
     	AudioFile.setSong(inputFilePath, fileType);
     }
+
     
     public WAVLaunchUI() {
         setTitle("Kevin From Accounting");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 700);
+        
 
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(new java.awt.Color(0, 0, 0, 220));
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
-
+        
         titleDashArtist = new JLabel("Error");
         titleDashArtist.setForeground(Color.white);
         titleDashArtist.setHorizontalAlignment(SwingConstants.CENTER);
@@ -64,13 +66,34 @@ public class WAVLaunchUI extends JFrame {
             }
         });
         
+        selectSongButton = new JButton("Select Song");
+        selectSongButton.addActionListener(new ActionListener() {
+               @Override
+               public void actionPerformed(ActionEvent e) {
+                   SwingUtilities.invokeLater(new Runnable() {
+                       public void run() {
+
+                           new AudioManager().setVisible(true);
+                           AudioFile.stop();
+                           dispose();
+                       }
+                   });
+               }
+           });
+
+        
         playPauseButton = new JButton("Play");
         playPauseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (playPauseButton.getText().equals("Play")) {
-                	AudioFile.play();
-                    System.out.println("SONG IS PLAYING");
+                	try {
+						AudioFile.play();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                    //System.out.println("SONG IS PLAYING");
                 	//add the code that starts the song playing
                 	
                     playPauseButton.setText("Pause");
@@ -79,8 +102,13 @@ public class WAVLaunchUI extends JFrame {
                     startTimer(initialTime, maxTime);
                 } else {
                     playPauseButton.setText("Play");
-                    AudioFile.pause();
-                   System.out.println("SONG IS PAUSED");
+                    try {
+						AudioFile.pause();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                    //System.out.println("SONG IS PAUSED");
                    //add the code that pauses the song from playing
                     
                     stopTimer();
@@ -102,6 +130,7 @@ public class WAVLaunchUI extends JFrame {
 
         JPanel controlPanel = new JPanel(new BorderLayout());
         controlPanel.add(playPauseButton, BorderLayout.EAST);
+        controlPanel.add(selectSongButton, BorderLayout.CENTER);
         controlPanel.add(infoButton, BorderLayout.WEST);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
