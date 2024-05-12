@@ -1,1 +1,168 @@
+import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.sound.sampled.Clip;
 
+
+public class AudioPlayer {
+	
+	// Audio File Filter marks String to WAV or MP3 depending on 
+	// corresponding file type.
+    String filePath;
+    private String fileType;
+	private long audioLength;
+	private Clip clip;
+    private boolean isPaused ;
+    private long clipTimePosition;
+    
+    
+	public void playWav(String inputFilePath) {
+		this.filePath = inputFilePath;
+	try {
+		File musicPath = new File(inputFilePath);
+		
+		if (musicPath.exists()) {
+			AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+			if (isPaused) {
+                clip.setMicrosecondPosition(clipTimePosition);
+                
+                isPaused = false;
+            } else {
+			clip = AudioSystem.getClip();
+			clip.open(audioInput);
+
+		}} else{JOptionPane.showMessageDialog(null,"Error File Not Found");}
+		
+	}catch(Exception e) {
+		System.out.println(e);
+		}
+	}
+
+    public void play() {
+        if (clip != null) {
+            if (isPaused) {
+                clip.setMicrosecondPosition(clipTimePosition);
+                clip.start();
+                isPaused = false;
+            } else {
+                clip.start();
+            }
+        }
+    }
+	
+    public void pause() {
+        if (clip != null && clip.isRunning()) {
+            clipTimePosition = clip.getMicrosecondPosition();
+            clip.stop();
+            isPaused = true;
+        }
+    }
+
+    public void seek(int seconds) {
+    	long microseconds = seconds * 1000;
+        if (clip != null && microseconds >= 0 && microseconds <= clip.getMicrosecondLength()) {
+            clip.setMicrosecondPosition(microseconds);
+        }
+    } 
+	 
+public long getLength(String inputFilePath, String fileType) {
+	this.filePath = inputFilePath;
+	this.fileType = fileType;
+	
+		if (fileType == "WAV") {
+			File file = new File(inputFilePath);
+			AudioInputStream audioInputStream = null;
+			try {
+				audioInputStream = AudioSystem.getAudioInputStream(file);
+			} catch (UnsupportedAudioFileException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			AudioFormat format = audioInputStream.getFormat();
+			long frames = audioInputStream.getFrameLength();
+			double SecondsRaw = (frames+0.0) / format.getFrameRate();
+			double Seconds = Math.round(SecondsRaw * 100.00) / 100.00;
+			this.audioLength = (long)Seconds;
+
+			//System.out.println(audioLength);
+			//System.out.println(fileType);
+			}
+	
+	if (fileType == "MP3") {
+		System.out.println("MP3 LENGTH NOT FINISHED");
+		System.out.println(fileType);
+	}
+	return audioLength;
+	
+}
+
+public void setSong(String inputFilePath, String fileType) {
+	this.filePath = inputFilePath;
+	this.fileType = fileType;
+	
+	if (fileType == "WAV") {
+		playWav(filePath);
+	}
+	if (fileType == "MP3") {
+		System.out.println("PLAYBACK NOT FINISHED FOR MP3");
+		System.out.println(fileType);
+	}
+}
+
+	
+    public String getFileType(String inputFilePath) {
+        this.filePath = inputFilePath;
+        File audioFile = new File(filePath);
+        
+        FileFilter wavFileFilter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.getName().toLowerCase().endsWith(".wav");
+            }
+        };
+        
+        FileFilter mp3FileFilter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.getName().toLowerCase().endsWith(".mp3");
+            }
+        };
+
+        if (wavFileFilter.accept(audioFile)) {
+            return "WAV";
+        } else if (mp3FileFilter.accept(audioFile)) {
+            return "MP3";
+        } else {
+            return "Unsupported File Type";
+        }
+    } 
+    
+  // Main that controls the INPUT of files and gets the type and can send to the player.
+	public static void main(String args[]) {	
+		 SwingUtilities.invokeLater(() -> {
+	        	WAVLaunchUI ui = new WAVLaunchUI();
+	        	
+	            String inputFilePath = "AudioFiles/chill.wav";
+	        	
+	        	AudioPlayer File = new AudioPlayer();
+	        	String fileType = File.getFileType(inputFilePath);
+	        	
+	        	File.setSong(inputFilePath, fileType.toString());
+	        	
+	        	ui.connect(inputFilePath);
+	            ui.setSongInfo("The Walls", "Chase Atlantic", "https://i.pinimg.com/564x/c1/b8/38/c1b838125a20e7d2bb42216376bf0752.jpg",(int)File.getLength(inputFilePath, fileType));
+	        });
+	    }
+	}
