@@ -1,32 +1,115 @@
 import java.io.*;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.awt.*;
+import java.awt.event.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javazoom.jl.decoder.Bitstream;
+import javax.swing.border.EmptyBorder;
+import javazoom.jl.decoder.Header;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.sound.sampled.Clip;
 
 
-public class AudioPlayer {
+public class AudioManager extends JFrame {
 	
-	// Audio File Filter marks String to WAV or MP3 depending on 
-	// corresponding file type.
     String filePath;
+    private Clip clip;
+    private Player player;
     private String fileType;
 	private long audioLength;
-	private Clip clip;
     private boolean isPaused ;
+    private int currentFrame;
     private long clipTimePosition;
+    private FileInputStream fileInputStream;
+    private static final String DEFAULT_DIRECTORY = "AudioFiles/UploadedFiles";
+    private static final String UPLOAD_DIRECTORY = "AudioFiles/UploadedFiles";
+
     
     
-	public void playWav(String inputFilePath) {
+    public AudioManager() {
+        setTitle("Select Or Upload a Song File:");
+        setSize(400, 100);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
+        setLayout(new GridLayout(1, 3));
+        setLocation(1100,700);
+        JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        selectPanel.setBackground(Color.darkGray);
+        selectPanel.setBorder(new EmptyBorder(10,0,0,0));
+        JButton selectButton = new JButton("Select File");
+        selectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser(DEFAULT_DIRECTORY);
+                int returnValue = fileChooser.showOpenDialog(AudioManager.this);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    String filePath = selectedFile.getAbsolutePath();
+                    String fileType = getFileType(filePath);
+                    dispose();
+                    setSong(filePath,fileType);
+                    WAVLaunchUI ui = new WAVLaunchUI();
+                    ui.setLocationRelativeTo(null);
+                    ui.setVisible(true);
+                    ui.connect(filePath);
+                    ui.setSongInfo(getTitle(filePath), fileType, "https://s2.dmcdn.net/v/EhLx1EaFFkpI0_C4/x1080",100);
+                    JOptionPane.showMessageDialog(AudioManager.this, "File Selected!" );
+                }
+            }
+        });
+        selectPanel.add(selectButton);
+
+        JPanel uploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        uploadPanel.setBackground(Color.darkGray);
+        uploadPanel.setBorder(new EmptyBorder(10,0,0,0));
+        JButton uploadButton = new JButton("Upload File");
+        uploadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                int returnValue = fileChooser.showOpenDialog(AudioManager.this);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    String fileName = selectedFile.getName();
+                    File destinationFile = new File(UPLOAD_DIRECTORY + File.separator + fileName);
+                    try {
+                        copyFile(selectedFile, destinationFile);
+                        JOptionPane.showMessageDialog(AudioManager.this, "File uploaded successfully!");
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(AudioManager.this, "Error uploading file: " + ex.getMessage());
+                    }
+                }
+            }
+
+            private void copyFile(File sourceFile, File destFile) throws IOException {
+                InputStream in = new FileInputStream(sourceFile);
+                OutputStream out = new FileOutputStream(destFile);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+                in.close();
+                out.close();
+            }
+        });
+        uploadPanel.add(uploadButton);
+        
+
+        add(selectPanel);
+        add(uploadPanel);
+    }   
+    
+	public void setWav(String inputFilePath) {
 		this.filePath = inputFilePath;
 	try {
 		File musicPath = new File(inputFilePath);
@@ -48,7 +131,8 @@ public class AudioPlayer {
 		}
 	}
 
-    public void play() {
+    public void play() throws IOException {
+    if (fileType == "WAV") {
         if (clip != null) {
             if (isPaused) {
                 clip.setMicrosecondPosition(clipTimePosition);
@@ -58,22 +142,91 @@ public class AudioPlayer {
                 clip.start();
             }
         }
+    }else {if(fileType == "MP3") {
+    	try {
+             if (player == null) {
+                 fileInputStream = new FileInputStream(filePath);
+                 player = new Player(fileInputStream);
+                 new Thread(() -> {
+                     try {
+                         player.play();
+                     } catch (JavaLayerException e) {
+                         e.printStackTrace();
+                     }
+                 }).start();
+                 isPaused = false;
+             } else {
+                 if (isPaused) {
+                     fileInputStream = new FileInputStream(filePath);
+                     player = new Player(fileInputStream);
+                     fileInputStream.skip(currentFrame);
+                     new Thread(() -> {
+                         try {
+                             player.play();
+                         } catch (JavaLayerException e) {
+                             e.printStackTrace();
+                         }
+                     }).start();
+                     isPaused = false;
+                 }
+             }
+         } catch (FileNotFoundException | JavaLayerException e) {
+             e.printStackTrace();
+         }
+     }
+ }
+}
+ 
+    public void stop() {
+        if (fileType == "WAV") {
+        	clip.stop();
+        }else {if(fileType == "MP3") {
+        	player.close();
+        	}
+        }
+        
     }
-	
-    public void pause() {
+
+    public void pause() throws IOException {
+    if (fileType == "WAV") {
         if (clip != null && clip.isRunning()) {
             clipTimePosition = clip.getMicrosecondPosition();
             clip.stop();
             isPaused = true;
         }
-    }
+    } else {if(fileType == "MP3") {
+        if (player != null) {
+            if (!isPaused) {
+                player.close();
+                isPaused = true;
+            } else {
+                play();
+                isPaused = false;
+            }
+        }
+  }
+ }
+}
 
     public void seek(int seconds) {
+    	if (fileType == "WAV") {
     	long microseconds = seconds * 1000;
         if (clip != null && microseconds >= 0 && microseconds <= clip.getMicrosecondLength()) {
             clip.setMicrosecondPosition(microseconds);
+        }   
+    }else {if(fileType == "MP3") {
+    	
+        if (player != null) {
+            try {
+                currentFrame = seconds * 1000;
+                fileInputStream.skip(currentFrame);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    } 
+    	
+    	}}
+    }
 	 
 public long getLength(String inputFilePath, String fileType) {
 	this.filePath = inputFilePath;
@@ -113,16 +266,25 @@ public void setSong(String inputFilePath, String fileType) {
 	this.fileType = fileType;
 	
 	if (fileType == "WAV") {
-		playWav(filePath);
+		setWav(filePath);
 	}
 	if (fileType == "MP3") {
-		System.out.println("PLAYBACK NOT FINISHED FOR MP3");
-		System.out.println(fileType);
+        this.filePath = inputFilePath;
+        this.isPaused = false;
+        this.currentFrame = 0;
 	}
 }
 
-	
-    public String getFileType(String inputFilePath) {
+	public static String getTitle(String filePath) {
+		File file = new File(filePath);
+		String fileName = file.getName();
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+			return fileName.substring(0, dotIndex);
+		}
+		return fileName;
+	}
+	public String getFileType(String inputFilePath) {
         this.filePath = inputFilePath;
         File audioFile = new File(filePath);
         
@@ -154,15 +316,16 @@ public void setSong(String inputFilePath, String fileType) {
 		 SwingUtilities.invokeLater(() -> {
 	        	WAVLaunchUI ui = new WAVLaunchUI();
 	        	
-	            String inputFilePath = "AudioFiles/chill.wav";
+	            String inputFilePath = "AudioFiles/sunny.mp3";
+	        	AudioManager songFile = new AudioManager();
+	        	String fileType = songFile.getFileType(inputFilePath);
 	        	
-	        	AudioPlayer File = new AudioPlayer();
-	        	String fileType = File.getFileType(inputFilePath);
+	        	songFile.setSong(inputFilePath, fileType.toString());
 	        	
-	        	File.setSong(inputFilePath, fileType.toString());
-	        	
+	        	ui.setLocationRelativeTo(null);
+                ui.setVisible(true);
 	        	ui.connect(inputFilePath);
-	            ui.setSongInfo("The Walls", "Chase Atlantic", "https://i.pinimg.com/564x/c1/b8/38/c1b838125a20e7d2bb42216376bf0752.jpg",(int)File.getLength(inputFilePath, fileType));
+	            ui.setSongInfo(getTitle(inputFilePath), fileType, "https://i.pinimg.com/564x/c1/b8/38/c1b838125a20e7d2bb42216376bf0752.jpg",(int)songFile.getLength(inputFilePath, fileType));
 	        });
 	    }
 	}
