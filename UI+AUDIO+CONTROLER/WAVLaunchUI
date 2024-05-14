@@ -34,32 +34,36 @@ public class WAVLaunchUI extends JFrame {
 
     // AudioManager object to handle audio file operations
     AudioManager AudioFile = new AudioManager();
-	
+
+    // Method to connect an audio file given its path
     public void connect(String inputFilePath) {
     	String fileType = AudioFile.getFileType(inputFilePath);
     	AudioFile.setSong(inputFilePath, fileType);
     }
 
-    
+    // Constructor for the UI
     public WAVLaunchUI() {
-        setTitle("Kevin From Accounting");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 700);
+        setTitle("Kevin From Accounting");  // Set the window title
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exit application on close
+        setSize(500, 700);  // Set the window size
         
-
+        // Main panel setup
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new java.awt.Color(0, 0, 0, 220));
+        mainPanel.setBackground(new java.awt.Color(0, 0, 0, 220));  // Set background color
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
-        
+        mainPanel.setBorder(new EmptyBorder(25, 25, 25, 25));  // Add padding
+
+        // Label for song title and artist
         titleDashArtist = new JLabel("Error");
-        titleDashArtist.setForeground(Color.white);
-        titleDashArtist.setHorizontalAlignment(SwingConstants.CENTER);
-        titleDashArtist.setFont(new Font("Verdana", Font.BOLD, 20));
+        titleDashArtist.setForeground(Color.white);  // Set text color
+        titleDashArtist.setHorizontalAlignment(SwingConstants.CENTER); // Center text
+        titleDashArtist.setFont(new Font("Verdana", Font.BOLD, 20));  // Set font
 
+        // Label for cover art
         coverArtLabel = new JLabel();
-        coverArtLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        coverArtLabel.setHorizontalAlignment(SwingConstants.CENTER);  // Center image
 
+        // Slider for seeking through the song
         songSeekSlider = new JSlider();
         songSeekSlider.setValue(0);
         songSeekSlider.setMinimum(0);
@@ -72,11 +76,12 @@ public class WAVLaunchUI extends JFrame {
                     int newValue = songSeekSlider.getValue();
                     currentTime = newValue;
                     updateTimerLabel();
-                    AudioFile.seek(newValue * 1000);
+                    AudioFile.seek(newValue * 1000);  // Seek to new position in milliseconds
                 }
             }
         });
-        
+
+        // Button to select a song
         selectSongButton = new JButton("Select Song");
         selectSongButton.addActionListener(new ActionListener() {
                @Override
@@ -84,28 +89,27 @@ public class WAVLaunchUI extends JFrame {
                    SwingUtilities.invokeLater(new Runnable() {
                        public void run() {
 
-                           new AudioManager().setVisible(true);
-                           AudioFile.stop();
-                           dispose();
+                           new AudioManager().setVisible(true);  // Show AudioManager window
+                           AudioFile.stop();  // Stop the current song
+                           dispose();  // Close the current window
                        }
                    });
                }
            });
 
-        
+        // Button to play or pause the song
         playPauseButton = new JButton("Play");
         playPauseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (playPauseButton.getText().equals("Play")) {
                 	try {
-						AudioFile.play();
+						AudioFile.play();  // Play the song
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
                     //System.out.println("SONG IS PLAYING");
-                	//add the code that starts the song playing
+                    //add the code that starts the song playing
                 	
                     playPauseButton.setText("Pause");
                     int initialTime = songSeekSlider.getValue();
