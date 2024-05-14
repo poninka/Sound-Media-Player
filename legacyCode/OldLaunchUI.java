@@ -22,7 +22,7 @@ public class LaunchUI extends JFrame {
     private Timer timer;
     private int currentTime;
 
-    public LaunchUI() {
+    public OldLaunchUI() {
         setTitle("Kevin From Accounting");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 700);
