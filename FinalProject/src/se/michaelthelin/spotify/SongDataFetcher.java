@@ -44,22 +44,28 @@ public class SongDataFetcher {
                 // Display the song information
                 System.out.println(" Title: " + title + "\n Artist: " +  artist + "\n Image: " + coverArtPath + "\n Duration: " + songLength + "s");
             } else {
+                // Display an error message if track data fetch failed
                 System.out.println("Failed to fetch track data from Spotify API.");
             }
         } else {
+            // Display an error message if access token fetch failed
             System.out.println("Failed to get access token from Spotify API.");
         }
         
         try {
+            // Open the song in the default browser if supported
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI("https://open.spotify.com/track/" + trackId));
             }
         } catch (Exception e) {
+            // Print the stack trace if an exception occurs
             e.printStackTrace();
         }
     }
 
+    // Main method to run the program
     public static void main(String args[]) {
+        // Create a new instance of SongDataFetcher
         SongDataFetcher songDataFetcher = new SongDataFetcher();
 
         // Ask the user for a song name
@@ -67,6 +73,7 @@ public class SongDataFetcher {
         System.out.println("Enter a song name to search for:");
         String songName = scanner.nextLine();
 
+        // Fetch and display the song information
         songDataFetcher.fetchAndDisplaySongInfo(songName);
     }
 }
