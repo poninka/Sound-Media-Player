@@ -1,5 +1,6 @@
 import java.io.*;
 import java.awt.*;
+import java.util.Random;
 import java.awt.event.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +14,9 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javazoom.jl.player.advanced.AdvancedPlayer;
+import javazoom.jl.player.advanced.PlaybackEvent;
+import javazoom.jl.player.advanced.PlaybackListener;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -31,12 +35,17 @@ public class AudioManager extends JFrame {
 	private long audioLength;
     private boolean isPaused ;
     private int currentFrame;
+    public void setCurrentFrame(int frame){
+        currentFrame = frame;
+    }
     private long clipTimePosition;
     private FileInputStream fileInputStream;
     private static final String DEFAULT_DIRECTORY = "AudioFiles/UploadedFiles";
     private static final String UPLOAD_DIRECTORY = "AudioFiles/UploadedFiles";
 
-    
+    public boolean getPause() {
+    	return isPaused;
+    }
     
     public AudioManager() {
         setTitle("Select Or Upload a Song File:");
@@ -58,11 +67,11 @@ public class AudioManager extends JFrame {
                     String fileType = getFileType(filePath);
                     dispose();
                     setSong(filePath,fileType);
-                    WAVLaunchUI ui = new WAVLaunchUI();
+                    LaunchUI ui = new LaunchUI();
                     ui.setLocationRelativeTo(null);
                     ui.setVisible(true);
                     ui.connect(filePath);
-                    ui.setSongInfo(getTitle(filePath), fileType, "https://s2.dmcdn.net/v/EhLx1EaFFkpI0_C4/x1080",100);
+                    ui.setSongInfo(getTitle(filePath), fileType, setImage(),100);
                     JOptionPane.showMessageDialog(AudioManager.this, "File Selected!" );
                 }
             }
@@ -147,6 +156,7 @@ public class AudioManager extends JFrame {
              if (player == null) {
                  fileInputStream = new FileInputStream(filePath);
                  player = new Player(fileInputStream);
+                 isPaused = false;
                  new Thread(() -> {
                      try {
                          player.play();
@@ -172,8 +182,8 @@ public class AudioManager extends JFrame {
              }
          } catch (FileNotFoundException | JavaLayerException e) {
              e.printStackTrace();
-         }
-     }
+   }
+  }
  }
 }
  
@@ -254,8 +264,7 @@ public long getLength(String inputFilePath, String fileType) {
 			}
 	
 	if (fileType == "MP3") {
-		System.out.println("MP3 LENGTH NOT FINISHED");
-		System.out.println(fileType);
+
 	}
 	return audioLength;
 	
@@ -310,13 +319,36 @@ public void setSong(String inputFilePath, String fileType) {
             return "Unsupported File Type";
         }
     } 
+	
+
+
+	    public String setImage() {
+	    	String[] images = new String[10];
+		    Random random = new Random();
+	       
+	        images[0] = "https://www.reddit.com/media?url=https%3A%2F%2Fi.redd.it%2Ffunniest-cat-pictures-you-have-v0-cvk0vuc0hj5a1.jpg%3Fwidth%3D3000%26format%3Dpjpg%26auto%3Dwebp%26s%3D73c395c63462f04c52e1550559dfb9809dd2a599";
+	        images[1] = "https://i.pinimg.com/736x/32/7e/db/327edb9a15b304efc264668ada03f725.jpg";
+	        images[2] = "https://media.tenor.com/2A0HDP3HSvEAAAAM/very-cat.gif";
+	        images[3] = "https://media.tenor.com/f4PUj7wUIm4AAAAM/cat-tongue.gif";
+	        images[4] = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxAovcWUqhjsERX0HasPytNiLHhVvK6hGkzTgArROSaw&s";
+	        images[5] = "https://wl-brightside.cf.tsp.li/resize/728x/jpg/e54/e78/30a24451a8ba30d37a3dfa888c.jpg";
+	        images[6] = "https://i.pinimg.com/736x/b4/ae/cb/b4aecbe26279a220286cf432da8a7d67.jpg";
+	        images[7] = "https://pbs.twimg.com/profile_images/1719004925986758657/971b49Ts_400x400.jpg";
+	        images[8] = "https://tr.rbxcdn.com/3bc5c56d710a6b4e0cd2af65e0f6cdf0/420/420/Hat/Webp";
+	        images[9] = "https://pbs.twimg.com/media/GHOmEMpWIAA67db.jpg";
+		        int index = random.nextInt(images.length);
+		        return images[index];
+		    }
+
+	   
+
     
   // Main that controls the INPUT of files and gets the type and can send to the player.
 	public static void main(String args[]) {	
 		 SwingUtilities.invokeLater(() -> {
-	        	WAVLaunchUI ui = new WAVLaunchUI();
+	        	LaunchUI ui = new LaunchUI();
 	        	
-	            String inputFilePath = "AudioFiles/sunny.mp3";
+	            String inputFilePath = "Null.wav";
 	        	AudioManager songFile = new AudioManager();
 	        	String fileType = songFile.getFileType(inputFilePath);
 	        	
@@ -325,7 +357,7 @@ public void setSong(String inputFilePath, String fileType) {
 	        	ui.setLocationRelativeTo(null);
                 ui.setVisible(true);
 	        	ui.connect(inputFilePath);
-	            ui.setSongInfo(getTitle(inputFilePath), fileType, "https://i.pinimg.com/564x/c1/b8/38/c1b838125a20e7d2bb42216376bf0752.jpg",(int)songFile.getLength(inputFilePath, fileType));
+	            ui.setSongInfo("Welcome To the Audio Player!", "",songFile.setImage(),(int)songFile.getLength(inputFilePath, fileType));
 	        });
 	    }
 	}
