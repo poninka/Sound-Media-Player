@@ -110,88 +110,100 @@ public class WAVLaunchUI extends JFrame {
 					}
                     //System.out.println("SONG IS PLAYING");
                     //add the code that starts the song playing
-                	
-                    playPauseButton.setText("Pause");
+		    // Check with Dan to see if the comment above has been completed.
+                    // It appears that it has.
+
+                    playPauseButton.setText("Pause");  // Change button text to "Pause"
                     int initialTime = songSeekSlider.getValue();
                     int maxTime = songSeekSlider.getMaximum();
-                    startTimer(initialTime, maxTime);
+                    startTimer(initialTime, maxTime);  // Start the timer
                 } else {
-                    playPauseButton.setText("Play");
+                    playPauseButton.setText("Play");  // Change the button text to "Play"
                     try {
-						AudioFile.pause();
+						AudioFile.pause();  // Pause the song
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
                     //System.out.println("SONG IS PAUSED");
                    //add the code that pauses the song from playing
                     
-                    stopTimer();
+                    stopTimer();  // Stop timer
                 }
             }
         });
 
+	// Button to display song info
         infoButton = new JButton("Info");
         infoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                displayInfo();
+                displayInfo();  // Show info dialog.
             }
         });
 
+	// Label to display the current time fo the song
         timeLabel = new JLabel("0:00");
         timeLabel.setForeground(Color.black);
         timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+	// Control panel to hold buttons
         JPanel controlPanel = new JPanel(new BorderLayout());
         controlPanel.add(playPauseButton, BorderLayout.EAST);
         controlPanel.add(selectSongButton, BorderLayout.CENTER);
         controlPanel.add(infoButton, BorderLayout.WEST);
 
+	// Bottom panel to hold control panel, slider, and time label
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(controlPanel, BorderLayout.NORTH);
         bottomPanel.add(songSeekSlider, BorderLayout.CENTER);
         bottomPanel.add(timeLabel, BorderLayout.SOUTH);
 
+	// Add components to the main panel
         mainPanel.add(titleDashArtist, BorderLayout.NORTH);
         mainPanel.add(coverArtLabel, BorderLayout.CENTER);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
+	// Add the main panel to the frame
         add(mainPanel);
-        setVisible(true);
+        setVisible(true);  // Show the window
     }
 
+    // Method to set song information
     public void setSongInfo(String title, String artist, String coverArtLink, int songLength) {
-        titleDashArtist.setText(title + " - " + artist);
-        songSeekSlider.setMaximum(songLength);
+        titleDashArtist.setText(title + " - " + artist);  // Set title and artist text
+        songSeekSlider.setMaximum(songLength);  // Set maximum value for slider
         try {
             URL url = new URL(coverArtLink);
             BufferedImage img = ImageIO.read(url);
-            Image scaledImage = img.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+            Image scaledImage = img.getScaledInstance(300, 300, Image.SCALE_SMOOTH);  // Scale image
             ImageIcon icon = new ImageIcon(scaledImage);
-            coverArtLabel.setIcon(icon);
+            coverArtLabel.setIcon(icon);  // Set cover art
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    // Method to display song information in a dialog
     private void displayInfo() {
     	
     	// ADD EXTRA DATA HERE FOR DESCRPTION OR OTHER GARBAGE
+	// Delete comment?
     	
-        String infoText = "Just make a string to add extra info here";
+        String infoText = "Just make a string to add extra info here";  // Info text to display
         JOptionPane.showMessageDialog(this, infoText, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Method to update the slider and time label
     private void updateSliderTime() {
         int value = songSeekSlider.getValue();
         currentTime = value;
         int minutes = value / 60;
         int seconds = value % 60;
         String timeString = String.format("%d:%02d", minutes, seconds);
-        timeLabel.setText(timeString);
+        timeLabel.setText(timeString);  // Update time label
     }
-    
+
+    // Method to start the timer for updating song progress
     private void startTimer(int initialTime, int maxTime) {
         currentTime = initialTime;
         timer = new Timer(1000, new ActionListener() {
@@ -201,24 +213,26 @@ public class WAVLaunchUI extends JFrame {
                     currentTime++;
                     updateTimerLabel();
                 } else {
-                    stopTimer();
+                    stopTimer();  // Stop timer when song ends
                 }
             }
         });
-        timer.start();
+        timer.start();  // Start the timer
     }
-    
+
+    // Method to stop the timer
     private void stopTimer() {
         if (timer != null) {
-            timer.stop();
+            timer.stop();  // Stop the timer if it is running
         }
     }
-    
+
+    // Method to update the time label
     private void updateTimerLabel() {
         int minutes = currentTime / 60;
         int seconds = currentTime % 60;
         String timeString = String.format("%d:%02d", minutes, seconds);
-        timeLabel.setText(timeString);
+        timeLabel.setText(timeString);  // Update time label with current time
     }
     
 }
