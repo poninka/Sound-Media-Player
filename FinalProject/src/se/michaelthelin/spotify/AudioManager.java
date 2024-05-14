@@ -34,35 +34,40 @@ import javax.sound.sampled.Clip;
 @SuppressWarnings("serial")
 public class AudioManager extends JFrame {
 	
-    String filePath;
-    private Clip clip;
-    private Player player;
-    private String fileType;
-	private long audioLength;
-    private boolean isPaused ;
-    private int currentFrame;
-    public void setCurrentFrame(int frame){
-        currentFrame = frame;
-    }
-    private long clipTimePosition;
-    private FileInputStream fileInputStream;
-    private static final String DEFAULT_DIRECTORY = "AudioFiles/UploadedFiles";
-    private static final String UPLOAD_DIRECTORY = "AudioFiles/UploadedFiles";
+    String filePath;  // Path of the audio file
+    private Clip clip;  // Clip object for handling WAV files
+    private Player player;  // Player object for handling MP3 files
+    private String fileType;  // Type of the audio file (WAV or MP3)
+	private long audioLength;  // Length of the audio file in seconds
+    private boolean isPaused ;  // Flag to check if the audio is paused
+    private int currentFrame;  // Current frame position for MP3 files
+    private long clipTimePosition;  // Position of the clip in microseconds when paused
+    private FileInputStream fileInputStream;  // Input stream for the audio file
+    private static final String DEFAULT_DIRECTORY = "AudioFiles/UploadedFiles";  // Default directory for file selection
+    private static final String UPLOAD_DIRECTORY = "AudioFiles/UploadedFiles";  // Directory for uploading files
 
+    // Getter method for the paused state
     public boolean getPause() {
     	return isPaused;
     }
-    
+    // Setter method for the current frame
+    public void setCurrentFrame(int frame){
+        currentFrame = frame;
+    }
+    // Constructor to initialize the UI
     public AudioManager() {
         setTitle("Select, Search, or Upload a Song File:");
         setSize(550, 100);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         setLayout(new GridLayout(1, 3));
         setLocation(1100,700);
+	    
+	// Panel for selecting a file
         JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         selectPanel.setBackground(Color.darkGray);
         selectPanel.setBorder(new EmptyBorder(10,0,0,0));
-        
+
+	// Button for selecting a file
         JButton selectButton = new JButton("Select File");
         selectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
