@@ -12,17 +12,28 @@ import java.net.URL;
 
 public class WAVLaunchUI extends JFrame {
     private static final long serialVersionUID = -1702351704098547978L;
+
+    // Labels to display song title/artist and cover art
     private JLabel titleDashArtist;
     private JLabel coverArtLabel;
+
+    // Slider to seek through the song
     private JSlider songSeekSlider;
+
+    // Buttons for play/pause, song selection, and info display
     private JButton playPauseButton;
     private JButton selectSongButton;
     private JButton infoButton;
+
+    // Label to display current song time
     private JLabel timeLabel;
+
+    // Timer to update the song seek slider and time label
     private Timer timer;
-    private int currentTime;
-   
-	AudioManager AudioFile = new AudioManager();
+    private int currentTime;  // Current time in seconds
+
+    // AudioManager object to handle audio file operations
+    AudioManager AudioFile = new AudioManager();
 	
     public void connect(String inputFilePath) {
     	String fileType = AudioFile.getFileType(inputFilePath);
