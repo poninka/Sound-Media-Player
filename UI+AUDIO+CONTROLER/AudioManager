@@ -27,35 +27,53 @@ import javax.sound.sampled.Clip;
 
 
 public class AudioManager extends JFrame {
-	
+     // Path of the audio file	
     String filePath;
+    // Clip object for handling WAV files
     private Clip clip;
+    // Player object for handling MP3 files
     private Player player;
+    // Type of the audio file (WAV or MP3)
     private String fileType;
-	private long audioLength;
+    // Length of the audio file in seconds
+    private long audioLength;
+    // Flag to check if the audio is paused
     private boolean isPaused ;
+    // Current frame position for MP3 files
     private int currentFrame;
-    public void setCurrentFrame(int frame){
-        currentFrame = frame;
-    }
+    // Position of the clip in microseconds when paused
     private long clipTimePosition;
+    // Input stream for the audio file
     private FileInputStream fileInputStream;
+
+    // Default directory for file selection and upload
     private static final String DEFAULT_DIRECTORY = "AudioFiles/UploadedFiles";
     private static final String UPLOAD_DIRECTORY = "AudioFiles/UploadedFiles";
 
+    // Getter method for the paused state
     public boolean getPause() {
     	return isPaused;
     }
-    
+
+    // Setter method for the current frame
+    public void setCurrentFrame(int frame){
+        currentFrame = frame;
+    }
+
+    // Constructor to initialize the UI
     public AudioManager() {
-        setTitle("Select Or Upload a Song File:");
-        setSize(400, 100);
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setLayout(new GridLayout(1, 3));
-        setLocation(1100,700);
+        setTitle("Select Or Upload a Song File:");  // Set the window title
+        setSize(400, 100);  // Set the window size
+        setDefaultCloseOperation(HIDE_ON_CLOSE);  // Set the default close operation
+        setLayout(new GridLayout(1, 3));  // Set the layout
+        setLocation(1100,700);  // Set the window location
+
+        // Panel for selecting a file
         JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        selectPanel.setBackground(Color.darkGray);
-        selectPanel.setBorder(new EmptyBorder(10,0,0,0));
+        selectPanel.setBackground(Color.darkGray);  // Set background color
+        selectPanel.setBorder(new EmptyBorder(10,0,0,0));  // Add padding
+
+        // Button for selecting a file
         JButton selectButton = new JButton("Select File");
         selectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -65,22 +83,25 @@ public class AudioManager extends JFrame {
                     File selectedFile = fileChooser.getSelectedFile();
                     String filePath = selectedFile.getAbsolutePath();
                     String fileType = getFileType(filePath);
-                    dispose();
-                    setSong(filePath,fileType);
+                    dispose();  // Close the current window
+                    setSong(filePath,fileType);  // Set the selected song
                     LaunchUI ui = new LaunchUI();
-                    ui.setLocationRelativeTo(null);
-                    ui.setVisible(true);
-                    ui.connect(filePath);
+                    ui.setLocationRelativeTo(null);  
+                    ui.setVisible(true);  // Show the LaunchUI window
+                    ui.connect(filePath);  // Connect the selected file
                     ui.setSongInfo(getTitle(filePath), fileType, setImage(),100);
                     JOptionPane.showMessageDialog(AudioManager.this, "File Selected!" );
                 }
             }
         });
-        selectPanel.add(selectButton);
+        selectPanel.add(selectButton);  // Add the button to the panel
 
+        // Panel for uploading a file
         JPanel uploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        uploadPanel.setBackground(Color.darkGray);
-        uploadPanel.setBorder(new EmptyBorder(10,0,0,0));
+        uploadPanel.setBackground(Color.darkGray);  // Set background color
+        uploadPanel.setBorder(new EmptyBorder(10,0,0,0));  // Add padding
+
+        // Button for uploading a file
         JButton uploadButton = new JButton("Upload File");
         uploadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -91,7 +112,7 @@ public class AudioManager extends JFrame {
                     String fileName = selectedFile.getName();
                     File destinationFile = new File(UPLOAD_DIRECTORY + File.separator + fileName);
                     try {
-                        copyFile(selectedFile, destinationFile);
+                        copyFile(selectedFile, destinationFile);  // Copy the selected file to the upload directory
                         JOptionPane.showMessageDialog(AudioManager.this, "File uploaded successfully!");
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(AudioManager.this, "Error uploading file: " + ex.getMessage());
@@ -99,25 +120,26 @@ public class AudioManager extends JFrame {
                 }
             }
 
+            // Method to copy a file
             private void copyFile(File sourceFile, File destFile) throws IOException {
                 InputStream in = new FileInputStream(sourceFile);
                 OutputStream out = new FileOutputStream(destFile);
                 byte[] buffer = new byte[1024];
                 int length;
                 while ((length = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, length);
+                    out.write(buffer, 0, length);  // Write the buffer to the destination file
                 }
-                in.close();
-                out.close();
+                in.close();  // Close the input stream
+                out.close();  // Close the output stream
             }
         });
-        uploadPanel.add(uploadButton);
+        uploadPanel.add(uploadButton);  // Add the button to the panel
         
 
-        add(selectPanel);
-        add(uploadPanel);
+        add(selectPanel);  // Add the select panel to the frame
+        add(uploadPanel);  // Add the upload panel to the frame
     }   
-    
+        // Method to set the WAV file
 	public void setWav(String inputFilePath) {
 		this.filePath = inputFilePath;
 	try {
@@ -126,12 +148,13 @@ public class AudioManager extends JFrame {
 		if (musicPath.exists()) {
 			AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
 			if (isPaused) {
-                clip.setMicrosecondPosition(clipTimePosition);
+                clip.setMicrosecondPosition(clipTimePosition);  // Set the clip position to the paused position
+                    isPaused = false;
                 
                 isPaused = false;
             } else {
 			clip = AudioSystem.getClip();
-			clip.open(audioInput);
+			clip.open(audioInput);  // Open the audio input stream
 
 		}} else{JOptionPane.showMessageDialog(null,"Error File Not Found");}
 		
@@ -140,15 +163,16 @@ public class AudioManager extends JFrame {
 		}
 	}
 
+    // Method to play the audio file
     public void play() throws IOException {
     if (fileType == "WAV") {
         if (clip != null) {
             if (isPaused) {
                 clip.setMicrosecondPosition(clipTimePosition);
-                clip.start();
+                clip.start();  // Start the clip
                 isPaused = false;
             } else {
-                clip.start();
+                clip.start();  // Start the clip
             }
         }
     }else {if(fileType == "MP3") {
@@ -159,7 +183,7 @@ public class AudioManager extends JFrame {
                  isPaused = false;
                  new Thread(() -> {
                      try {
-                         player.play();
+                         player.play();  // Play the MP3 file
                      } catch (JavaLayerException e) {
                          e.printStackTrace();
                      }
@@ -169,10 +193,10 @@ public class AudioManager extends JFrame {
                  if (isPaused) {
                      fileInputStream = new FileInputStream(filePath);
                      player = new Player(fileInputStream);
-                     fileInputStream.skip(currentFrame);
+                     fileInputStream.skip(currentFrame);  // Skip to the current frame
                      new Thread(() -> {
                          try {
-                             player.play();
+                             player.play();  // Play the MP3 file
                          } catch (JavaLayerException e) {
                              e.printStackTrace();
                          }
@@ -186,50 +210,52 @@ public class AudioManager extends JFrame {
   }
  }
 }
- 
+    // Method to stop the audio file
     public void stop() {
         if (fileType == "WAV") {
-        	clip.stop();
+        	clip.stop();  // Stop the clip
         }else {if(fileType == "MP3") {
-        	player.close();
+        	player.close();  // Close the player
         	}
         }
         
     }
 
+    // Method to pause the audio file
     public void pause() throws IOException {
     if (fileType == "WAV") {
         if (clip != null && clip.isRunning()) {
             clipTimePosition = clip.getMicrosecondPosition();
-            clip.stop();
-            isPaused = true;
+            clip.stop();  // Stop the clip
+            isPaused = true;  // Set the paused flag
         }
     } else {if(fileType == "MP3") {
         if (player != null) {
             if (!isPaused) {
-                player.close();
-                isPaused = true;
+                player.close();  // Close the player
+                isPaused = true;  // Set the paused flag
             } else {
-                play();
-                isPaused = false;
+                play();  // Play the MP3 file
+                isPaused = false;  // Reset the paused flag
             }
         }
   }
  }
 }
 
+    // Method to seek to a specific position in the audio file
     public void seek(int seconds) {
     	if (fileType == "WAV") {
     	long microseconds = seconds * 1000;
         if (clip != null && microseconds >= 0 && microseconds <= clip.getMicrosecondLength()) {
-            clip.setMicrosecondPosition(microseconds);
+            clip.setMicrosecondPosition(microseconds);  // Set the clip position
         }   
     }else {if(fileType == "MP3") {
     	
         if (player != null) {
             try {
                 currentFrame = seconds * 1000;
-                fileInputStream.skip(currentFrame);
+                fileInputStream.skip(currentFrame);  // Set the clip position
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -237,7 +263,8 @@ public class AudioManager extends JFrame {
     	
     	}}
     }
-	 
+
+// Method to get the length of the audio file
 public long getLength(String inputFilePath, String fileType) {
 	this.filePath = inputFilePath;
 	this.fileType = fileType;
@@ -264,12 +291,13 @@ public long getLength(String inputFilePath, String fileType) {
 			}
 	
 	if (fileType == "MP3") {
-
+		
 	}
 	return audioLength;
 	
 }
 
+// Method to set the song file and type
 public void setSong(String inputFilePath, String fileType) {
 	this.filePath = inputFilePath;
 	this.fileType = fileType;
@@ -283,7 +311,7 @@ public void setSong(String inputFilePath, String fileType) {
         this.currentFrame = 0;
 	}
 }
-
+        // Method to get the title of the file
 	public static String getTitle(String filePath) {
 		File file = new File(filePath);
 		String fileName = file.getName();
@@ -293,17 +321,20 @@ public void setSong(String inputFilePath, String fileType) {
 		}
 		return fileName;
 	}
+        // Method to get the file type based on extension
 	public String getFileType(String inputFilePath) {
         this.filePath = inputFilePath;
         File audioFile = new File(filePath);
-        
+
+        // File filter for WAV files
         FileFilter wavFileFilter = new FileFilter() {
             @Override
             public boolean accept(File file) {
                 return file.getName().toLowerCase().endsWith(".wav");
             }
         };
-        
+
+        // File filter for MP3 files
         FileFilter mp3FileFilter = new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -321,7 +352,7 @@ public void setSong(String inputFilePath, String fileType) {
     } 
 	
 
-
+            // Method to set a random image URL
 	    public String setImage() {
 	    	String[] images = new String[10];
 		    Random random = new Random();
@@ -340,10 +371,7 @@ public void setSong(String inputFilePath, String fileType) {
 		        return images[index];
 		    }
 
-	   
-
-    
-  // Main that controls the INPUT of files and gets the type and can send to the player.
+        // Main method to control the input of files and send to the player
 	public static void main(String args[]) {	
 		 SwingUtilities.invokeLater(() -> {
 	        	LaunchUI ui = new LaunchUI();
