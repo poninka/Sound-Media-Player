@@ -33,7 +33,7 @@ import javax.sound.sampled.Clip;
 
 @SuppressWarnings("serial")
 public class AudioManager extends JFrame {
-	
+    // Class variables for managing audio files and playback	
     String filePath;  // Path of the audio file
     private Clip clip;  // Clip object for handling WAV files
     private Player player;  // Player object for handling MP3 files
@@ -89,7 +89,8 @@ public class AudioManager extends JFrame {
             }
         });
         selectPanel.add(selectButton);
-        
+
+	// Spotify Search button
         JButton spotifyButton = new JButton(loadImage("Assets/SpotifyLogo.png"));
         spotifyButton.setBorder(new EmptyBorder(10,0,0,0));
         spotifyButton.setSize(3, 1);
@@ -115,6 +116,7 @@ public class AudioManager extends JFrame {
         );
         selectPanel.add(spotifyButton);
 
+	// Upload File button
         JPanel uploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         uploadPanel.setBackground(Color.darkGray);
         uploadPanel.setBorder(new EmptyBorder(10,0,0,0));
@@ -136,6 +138,7 @@ public class AudioManager extends JFrame {
                 }
             }
 
+             // Method to copy file from source to destination
             public void copyFile(File sourceFile, File destFile) throws IOException {
                 InputStream in = new FileInputStream(sourceFile);
                 OutputStream out = new FileOutputStream(destFile);
@@ -149,12 +152,13 @@ public class AudioManager extends JFrame {
             }
         });
         uploadPanel.add(uploadButton);
-        
+
+	// Add panels to the frame
         add(selectPanel, BorderLayout.WEST);
         add(spotifyButton, BorderLayout.CENTER);
         add(uploadPanel, BorderLayout.EAST);
     }   
-    
+        // Method to set WAV file for playback
 	public void setWav(String inputFilePath) {
 		this.filePath = inputFilePath;
 	try {
@@ -177,6 +181,7 @@ public class AudioManager extends JFrame {
 		}
 	}
 
+    // Method to play audio file
     public void play() throws IOException {
     if (fileType == "WAV") {
         if (clip != null) {
@@ -223,7 +228,8 @@ public class AudioManager extends JFrame {
   }
  }
 }
- 
+
+    // Method to stop audio playback
     public void stop() {
         if (fileType == "WAV") {
         	clip.stop();
@@ -234,6 +240,7 @@ public class AudioManager extends JFrame {
         
     }
 
+    // Method to pause audio playback
     public void pause() throws IOException {
     if (fileType == "WAV") {
         if (clip != null && clip.isRunning()) {
@@ -255,6 +262,7 @@ public class AudioManager extends JFrame {
  }
 }
 
+    // Method to load image
     private ImageIcon loadImage(String imagePath){
         try{
 
@@ -267,7 +275,8 @@ public class AudioManager extends JFrame {
 
         return null;
     }
-    
+
+    // Method to seek to a specific position in the audio
     public void seek(int seconds) {
     	if (fileType == "WAV") {
     	long microseconds = seconds * 1000;
@@ -287,7 +296,8 @@ public class AudioManager extends JFrame {
     	
     	}}
     }
-	 
+
+// Method to get the length of the audio file
 public long getLength(String inputFilePath, String fileType) {
 	this.filePath = inputFilePath;
 	this.fileType = fileType;
@@ -320,6 +330,7 @@ public long getLength(String inputFilePath, String fileType) {
 	
 }
 
+// Method to set the audio file
 public void setSong(String inputFilePath, String fileType) {
 	this.filePath = inputFilePath;
 	this.fileType = fileType;
@@ -334,6 +345,7 @@ public void setSong(String inputFilePath, String fileType) {
 	}
 }
 
+	// Method to get the title of the audio file
 	public static String getTitle(String filePath) {
 		File file = new File(filePath);
 		String fileName = file.getName();
@@ -343,6 +355,8 @@ public void setSong(String inputFilePath, String fileType) {
 		}
 		return fileName;
 	}
+
+	// Method to get the file type of the audio file
 	public String getFileType(String inputFilePath) {
         this.filePath = inputFilePath;
         File audioFile = new File(filePath);
@@ -369,9 +383,7 @@ public void setSong(String inputFilePath, String fileType) {
             return "Unsupported File Type";
         }
     } 
-	
-
-
+	    // Method to set a random image
 	    public String setImage() {
 	    	String[] images = new String[10];
 		    Random random = new Random();
@@ -390,10 +402,7 @@ public void setSong(String inputFilePath, String fileType) {
 		        return images[index];
 		    }
 
-	   
-
-    
-  // Main that controls the INPUT of files and gets the type and can send to the player.
+	// Main method to control the input of files and initialize the player
 	public static void main(String args[]) {	
 		 SwingUtilities.invokeLater(() -> {
 	        	LaunchUI ui = new LaunchUI();
