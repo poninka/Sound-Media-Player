@@ -13,11 +13,14 @@ public class SongDataFetcher {
 
     private static SpotifyApiClient spotifyApiClient;
     private static SpotifySongSearcher spotifySongSearcher;
+    
+    // Constructor to initialize Spotify API client and song searcher
     public SongDataFetcher() {
         spotifyApiClient = new SpotifyApiClient();
         spotifySongSearcher = new SpotifySongSearcher();
     }
 
+    // Inner class to hold song information
     public class SongInfo {
         String title;
         String artist;
@@ -32,6 +35,7 @@ public class SongDataFetcher {
         }
     }
 
+    // Method to fetch and display song information
     public SongInfo fetchAndDisplaySongInfo(String songName) {
         String accessToken = spotifyApiClient.getAccessToken();
         String trackId = spotifySongSearcher.searchSong(accessToken, songName);
@@ -57,6 +61,7 @@ public class SongDataFetcher {
         }
         
         try {
+            // Open the song link in the browser
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI("https://open.spotify.com/track/" + trackId));
             }
