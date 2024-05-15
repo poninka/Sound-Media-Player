@@ -20,6 +20,7 @@ public class SpotifyLaunchUI extends JFrame {
    private JLabel coverArtLabel;
    private JTextField searchBar; // Added JTextField for search bar
 
+   // Constructor to initialize UI components
    public SpotifyLaunchUI() {
        setTitle("Kevin From Accounting");
        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,6 +61,7 @@ public class SpotifyLaunchUI extends JFrame {
        setVisible(true);
    }
 
+   // Method to set song information in the UI
    public void setSongInfo(String title, String artist, String coverArtLink) {
        titleDashArtist.setText(title + " - " + artist);
       
@@ -76,7 +78,7 @@ public class SpotifyLaunchUI extends JFrame {
    
    }
 
-
+// Method to launch the main UI
 public void launchUI2() {
 	SwingUtilities.invokeLater(() -> {
 		 LaunchUI ui = new LaunchUI();
