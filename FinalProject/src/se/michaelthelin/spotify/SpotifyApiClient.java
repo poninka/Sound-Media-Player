@@ -5,7 +5,8 @@ import java.util.Base64;
 import java.util.Scanner;
  
 public class SpotifyApiClient {
- 
+
+    // OkHttpClient instance for making HTTP requests
     private final OkHttpClient httpClient = new OkHttpClient();
     private final String clientId = "658aebb78eea46db998ad183f4f23902";
     private final String clientSecret = "15b891710faa4be6abceeda7816d85c2";
@@ -17,7 +18,8 @@ public class SpotifyApiClient {
         String accessToken = client.getAccessToken();
         System.out.println("Access Token: " + accessToken);
     }
- 
+
+    // Method to get access token from Spotify API
     protected String getAccessToken() {
         try {
             String credentials = clientId + ":" + clientSecret;
@@ -42,7 +44,8 @@ public class SpotifyApiClient {
             return null;
         }
     }
- 
+
+    // Method to get track data from Spotify API
     protected String getTrackData(String accessToken, String trackId) {
         try {
             HttpUrl url = HttpUrl.parse(baseApiUrl + "/tracks/" + trackId).newBuilder().build();
@@ -58,7 +61,8 @@ public class SpotifyApiClient {
             return null;
         }
     }
- 
+
+    // Inner class to hold token response
     private static class TokenResponse {
         String access_token;
     }
