@@ -27,12 +27,13 @@ public class LaunchUI extends JFrame {
    
 	AudioManager AudioFile = new AudioManager();
 	
+    // Method to connect the UI to the audio file
     public void connect(String inputFilePath) {
     	String fileType = AudioFile.getFileType(inputFilePath);
     	AudioFile.setSong(inputFilePath, fileType);
     }
 
-    
+    // Method to load image
     private ImageIcon loadImage(String imagePath){
         try{
 
@@ -45,7 +46,8 @@ public class LaunchUI extends JFrame {
 
         return null;
     }
-    
+
+    // Constructor to initialize UI components
     public LaunchUI() {
         setTitle("Kevin From Accounting");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +83,8 @@ public class LaunchUI extends JFrame {
                 }
             }
         });
-        
+
+	// Button to select a new song
         selectSongButton = new JButton(loadImage("Assets/PickSong.png"));
         selectSongButton.addActionListener(new ActionListener() {
                @Override
@@ -97,7 +100,7 @@ public class LaunchUI extends JFrame {
                }
            });
 
-        
+        // Button to play/pause the song
         playPauseButton = new JButton(loadImage("Assets/Play.png"));
         playPauseButton.addActionListener(new ActionListener() {
             @Override
@@ -131,6 +134,7 @@ public class LaunchUI extends JFrame {
             }
         });
 
+	// Info button
         infoButton = new JButton("Info");
         infoButton.addActionListener(new ActionListener() {
             @Override
@@ -161,6 +165,7 @@ public class LaunchUI extends JFrame {
         setVisible(true);
     }
 
+    // Method to set song information in the UI
     public void setSongInfo(String title, String artist, String coverArtLink, int songLength) {
         titleDashArtist.setText(title + " - " + artist);
         songSeekSlider.setMaximum(songLength);
@@ -175,6 +180,7 @@ public class LaunchUI extends JFrame {
         }
     }
 
+    // Method to display additional info
     private void displayInfo() {
     	
     	// ADD EXTRA DATA HERE FOR DESCRPTION OR OTHER GARBAGE
@@ -183,6 +189,7 @@ public class LaunchUI extends JFrame {
         JOptionPane.showMessageDialog(this, infoText, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Method to update slider time
     private void updateSliderTime() {
         int value = songSeekSlider.getValue();
         currentTime = value;
@@ -191,7 +198,8 @@ public class LaunchUI extends JFrame {
         String timeString = String.format("%d:%02d", minutes, seconds);
         timeLabel.setText(timeString);
     }
-    
+
+    // Method to start timer
     private void startTimer(int initialTime, int maxTime) {
         currentTime = initialTime;
         timer = new Timer(1000, new ActionListener() {
@@ -207,13 +215,15 @@ public class LaunchUI extends JFrame {
         });
         timer.start();
     }
-    
+
+    // Method to stop timer
     private void stopTimer() {
         if (timer != null) {
             timer.stop();
         }
     }
-    
+
+    // Method to update timer label
     private void updateTimerLabel() {
         int minutes = currentTime / 60;
         int seconds = currentTime % 60;
