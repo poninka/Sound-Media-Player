@@ -9,6 +9,7 @@ public class SpotifySongSearcher {
     private final OkHttpClient httpClient = new OkHttpClient();
     private final String baseApiUrl = "https://api.spotify.com/v1";
 
+    // Method to search for a song on Spotify
     public String searchSong(String accessToken, String songName) {
         try {
         	 HttpUrl url = HttpUrl.parse(baseApiUrl + "/search").newBuilder()
