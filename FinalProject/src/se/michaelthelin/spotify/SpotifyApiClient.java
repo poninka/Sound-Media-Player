@@ -2,9 +2,11 @@ package se.michaelthelin.spotify;
 import okhttp3.*;
 import com.google.gson.Gson;
 import java.util.Base64;
+import java.util.Scanner;
  
 public class SpotifyApiClient {
- 
+
+    // OkHttpClient instance for making HTTP requests
     private final OkHttpClient httpClient = new OkHttpClient();
     private final String clientId = "658aebb78eea46db998ad183f4f23902";
     private final String clientSecret = "15b891710faa4be6abceeda7816d85c2";
@@ -15,13 +17,10 @@ public class SpotifyApiClient {
         SpotifyApiClient client = new SpotifyApiClient();
         String accessToken = client.getAccessToken();
         System.out.println("Access Token: " + accessToken);
- 
-        // Example of fetching track data
-        String trackData = client.getTrackData(accessToken, "3n3Ppam7vgaVa1iaRUc9Lp"); // Replace with a valid track ID
-        System.out.println("Track Data: " + trackData);
     }
- 
-    private String getAccessToken() {
+
+    // Method to get access token from Spotify API
+    protected String getAccessToken() {
         try {
             String credentials = clientId + ":" + clientSecret;
             String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
@@ -45,8 +44,9 @@ public class SpotifyApiClient {
             return null;
         }
     }
- 
-    private String getTrackData(String accessToken, String trackId) {
+
+    // Method to get track data from Spotify API
+    protected String getTrackData(String accessToken, String trackId) {
         try {
             HttpUrl url = HttpUrl.parse(baseApiUrl + "/tracks/" + trackId).newBuilder().build();
             Request request = new Request.Builder()
@@ -61,7 +61,8 @@ public class SpotifyApiClient {
             return null;
         }
     }
- 
+
+    // Inner class to hold token response
     private static class TokenResponse {
         String access_token;
     }
