@@ -1,0 +1,7 @@
+# Spotify API Configuration
+# Copy this file to config.properties and fill in your credentials
+# Or use the UI button to configure tokens at runtime
+
+spotify.client.id=your_client_id_here
+spotify.client.secret=your_client_secret_here
+

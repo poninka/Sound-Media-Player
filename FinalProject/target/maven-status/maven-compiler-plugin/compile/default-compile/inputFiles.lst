@@ -1,6 +1,10 @@
-/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/se/michaelthelin/spotify/AudioManager.java
-/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/se/michaelthelin/spotify/SongDataFetcher.java
-/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/se/michaelthelin/spotify/LaunchUI.java
-/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/se/michaelthelin/spotify/SpotifyApiClient.java
-/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/se/michaelthelin/spotify/SpotifySongSearcher.java
-/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/se/michaelthelin/spotify/SpotifyLaunchUI.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/spotify/SongDataFetcher.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/ui/WindowManager.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/spotify/SpotifySongSearcher.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/ui/components/PlaybackSlider.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/spotify/SpotifyApiClient.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/ui/LaunchUI.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/ui/TokenConfigDialog.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/ui/AudioManager.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/ui/SpotifyLaunchUI.java
+/Users/danielbagroff/Documents/GitHub/Sound-Media-Player/FinalProject/src/main/java/com/soundmediaplayer/config/ConfigManager.java
