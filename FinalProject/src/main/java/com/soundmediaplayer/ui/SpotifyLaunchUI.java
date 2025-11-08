@@ -24,7 +24,7 @@ public class SpotifyLaunchUI extends JFrame {
 
     // Constructor to initialize UI components
     public SpotifyLaunchUI() {
-        setTitle("Kevin From Accounting - Spotify Search");
+        setTitle("Sound Media Player - Spotify Search");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 700);
 
@@ -99,4 +99,3 @@ public class SpotifyLaunchUI extends JFrame {
         });
     }
 }
-

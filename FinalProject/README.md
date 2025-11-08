@@ -74,10 +74,6 @@ FinalProject/
    ```bash
    mvn exec:java -Dexec.mainClass="com.soundmediaplayer.ui.AudioManager"
    ```
-   Or, from the repository root, you can launch the already-packaged executable:
-   ```bash
-   java -jar Builds/SoundMediaPlayer.jar
-   ```
 
 ## Usage
 
@@ -119,7 +115,7 @@ mvn checkstyle:check
 
 ## Development
 
-This project was developed collaboratively by a 3-person team using Git and GitHub for version control. The application demonstrates:
+This project was developed collaboratively by a 3-person team using GitHub. The application demonstrates:
 
 - Object-oriented design principles
 - API integration and authentication
@@ -135,3 +131,4 @@ This project is provided as-is for educational and portfolio purposes.
 
 - Spotify Web API for track metadata
 - JLayer library for MP3 playback support
+

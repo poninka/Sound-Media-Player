@@ -92,7 +92,7 @@
                   <mainClass>com.soundmediaplayer.ui.AudioManager</mainClass>
                 </transformer>
               </transformers>
-              <outputDirectory>../builds</outputDirectory>
+              <outputDirectory>../Builds</outputDirectory>
               <finalName>SoundMediaPlayer</finalName>
             </configuration>
           </execution>

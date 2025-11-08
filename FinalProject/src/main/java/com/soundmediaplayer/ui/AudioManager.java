@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import javax.sound.sampled.AudioFormat;
@@ -31,12 +33,15 @@ public class AudioManager extends JFrame {
     String filePath;  // Path of the audio file
     private Clip clip;  // Clip object for handling WAV files
     private Player player;  // Player object for handling MP3 files
+    private BufferedInputStream bufferedInputStream;
     private String fileType;  // Type of the audio file (WAV or MP3)
     private long audioLength;  // Length of the audio file in seconds
-    private boolean isPaused;  // Flag to check if the audio is paused
-    private int currentFrame;  // Current frame position for MP3 files
+    private boolean isPaused = true;  // Flag to check if the audio is paused
+    private int currentFrame;  // Current seek position for MP3 files (milliseconds)
     private long clipTimePosition;  // Position of the clip in microseconds when paused
     private FileInputStream fileInputStream;  // Input stream for the audio file
+    private long mp3BytesPerMillisecond;
+    private long estimatedMp3LengthMs;
     
     // Cross-platform directory paths
     private static final Path UPLOAD_DIRECTORY = Paths.get("AudioFiles", "UploadedFiles");
@@ -53,7 +58,7 @@ public class AudioManager extends JFrame {
     
     // Constructor to initialize the UI
     public AudioManager() {
-        setTitle("Select, Search, or Upload a Song File:");
+        setTitle("Sound Media Player - Library");
         setSize(550, 100);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(new GridLayout(1, 3));
@@ -84,10 +89,10 @@ public class AudioManager extends JFrame {
                     
                     // Switch back to LaunchUI
                     LaunchUI ui = WindowManager.getLaunchUI();
-                    ui.connect(filePath);
-                    ui.setSongInfo(getTitle(filePath), fileType, setImage(), 100);
-                    WindowManager.setCurrentWindow(ui);
-                    JOptionPane.showMessageDialog(ui, "File Selected!");
+                    ui.loadSongFromSelection(filePath);
+                    ui.toFront();
+                    ui.requestFocus();
+                    JOptionPane.showMessageDialog(ui, "File selected! Starting playback.");
                 }
             }
         });
@@ -192,34 +197,8 @@ public class AudioManager extends JFrame {
             }
         } else if ("MP3".equals(fileType)) {
             try {
-                if (player == null) {
-                    fileInputStream = new FileInputStream(filePath);
-                    player = new Player(fileInputStream);
-                    isPaused = false;
-                    new Thread(() -> {
-                        try {
-                            player.play();
-                        } catch (JavaLayerException e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                    isPaused = false;
-                } else {
-                    if (isPaused) {
-                        fileInputStream = new FileInputStream(filePath);
-                        player = new Player(fileInputStream);
-                        fileInputStream.skip(currentFrame);
-                        new Thread(() -> {
-                            try {
-                                player.play();
-                            } catch (JavaLayerException e) {
-                                e.printStackTrace();
-                            }
-                        }).start();
-                        isPaused = false;
-                    }
-                }
-            } catch (FileNotFoundException | JavaLayerException e) {
+                startMp3Playback(currentFrame);
+            } catch (IOException | JavaLayerException e) {
                 e.printStackTrace();
             }
         }
@@ -230,11 +209,14 @@ public class AudioManager extends JFrame {
         if ("WAV".equals(fileType)) {
             if (clip != null) {
                 clip.stop();
+                clip.setMicrosecondPosition(0);
             }
+            isPaused = true;
+            clipTimePosition = 0;
         } else if ("MP3".equals(fileType)) {
-            if (player != null) {
-                player.close();
-            }
+            closeMp3Resources();
+            currentFrame = 0;
+            isPaused = true;
         }
     }
 
@@ -247,14 +229,9 @@ public class AudioManager extends JFrame {
                 isPaused = true;
             }
         } else if ("MP3".equals(fileType)) {
-            if (player != null) {
-                if (!isPaused) {
-                    player.close();
-                    isPaused = true;
-                } else {
-                    play();
-                    isPaused = false;
-                }
+            if (!isPaused) {
+                closeMp3Resources();
+                isPaused = true;
             }
         }
     }
@@ -274,23 +251,17 @@ public class AudioManager extends JFrame {
     }
 
     // Method to seek to a specific position in the audio
-    public void seek(int seconds) {
+    public void seek(int milliseconds) {
         if ("WAV".equals(fileType)) {
-            long microseconds = seconds * 1000L;
-            if (clip != null && microseconds >= 0 && microseconds <= clip.getMicrosecondLength()) {
-                clip.setMicrosecondPosition(microseconds);
+            if (clip != null) {
+                long microseconds = Math.max(0, (long) milliseconds) * 1000L;
+                long clamped = Math.min(microseconds, clip.getMicrosecondLength());
+                clip.setMicrosecondPosition(clamped);
             }
         } else if ("MP3".equals(fileType)) {
-            if (player != null) {
-                try {
-                    currentFrame = seconds * 1000;
-                    if (fileInputStream != null) {
-                        fileInputStream.skip(currentFrame);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            long maxMs = estimatedMp3LengthMs > 0 ? estimatedMp3LengthMs : Long.MAX_VALUE;
+            long clamped = Math.min(maxMs, Math.max(0, (long) milliseconds));
+            currentFrame = (int) clamped;
         }
     }
 
@@ -323,7 +294,25 @@ public class AudioManager extends JFrame {
         }
         
         if ("MP3".equals(fileType)) {
-            // MP3 length calculation would go here if needed
+            File file = new File(inputFilePath);
+            try (FileInputStream fis = new FileInputStream(file)) {
+                Bitstream bitstream = new Bitstream(fis);
+                Header header = bitstream.readFrame();
+                if (header != null) {
+                    double totalMs = header.total_ms((int) file.length());
+                    estimatedMp3LengthMs = (long) Math.max(1, Math.round(totalMs));
+                    audioLength = Math.max(1L, estimatedMp3LengthMs / 1000L);
+                    long fileSize = Math.max(1L, file.length());
+                    mp3BytesPerMillisecond = Math.max(1L, fileSize / estimatedMp3LengthMs);
+                    bitstream.closeFrame();
+                }
+                bitstream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                audioLength = 0;
+                estimatedMp3LengthMs = 0;
+                mp3BytesPerMillisecond = 0;
+            }
         }
         return audioLength;
     }
@@ -335,11 +324,14 @@ public class AudioManager extends JFrame {
         
         if ("WAV".equals(fileType)) {
             setWav(filePath);
+            isPaused = true;
         }
         if ("MP3".equals(fileType)) {
             this.filePath = inputFilePath;
-            this.isPaused = false;
+            this.isPaused = true;
             this.currentFrame = 0;
+            closeMp3Resources();
+            getLength(inputFilePath, fileType);
         }
     }
 
@@ -369,6 +361,78 @@ public class AudioManager extends JFrame {
         }
     }
     
+    /**
+     * Indicates whether a valid audio file has been loaded for playback.
+     */
+    public boolean hasLoadedSong() {
+        return filePath != null
+                && fileType != null
+                && !"Unsupported File Type".equalsIgnoreCase(fileType);
+    }
+
+    private void closeMp3Resources() {
+        if (player != null) {
+            player.close();
+            player = null;
+        }
+        if (bufferedInputStream != null) {
+            try {
+                bufferedInputStream.close();
+            } catch (IOException e) {
+                System.err.println("Unable to close buffered input stream: " + e.getMessage());
+            }
+            bufferedInputStream = null;
+        }
+        if (fileInputStream != null) {
+            try {
+                fileInputStream.close();
+            } catch (IOException e) {
+                System.err.println("Unable to close file input stream: " + e.getMessage());
+            }
+            fileInputStream = null;
+        }
+    }
+
+    private void startMp3Playback(int startPositionMs) throws IOException, JavaLayerException {
+        if (filePath == null) {
+            return;
+        }
+        closeMp3Resources();
+        File file = new File(filePath);
+        long fileSize = Math.max(1L, file.length());
+        fileInputStream = new FileInputStream(file);
+        bufferedInputStream = new BufferedInputStream(fileInputStream);
+        long targetMs = Math.max(0, (long) startPositionMs);
+        long bytesToSkip = mp3BytesPerMillisecond > 0
+                ? Math.min(fileSize, targetMs * mp3BytesPerMillisecond)
+                : Math.min(fileSize, targetMs);
+        skipFully(bufferedInputStream, bytesToSkip);
+        player = new Player(bufferedInputStream);
+        isPaused = false;
+        new Thread(() -> {
+            try {
+                player.play();
+            } catch (JavaLayerException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void skipFully(InputStream stream, long bytesToSkip) throws IOException {
+        long remaining = bytesToSkip;
+        while (remaining > 0) {
+            long skipped = stream.skip(remaining);
+            if (skipped <= 0) {
+                if (stream.read() == -1) {
+                    break;
+                }
+                remaining--;
+            } else {
+                remaining -= skipped;
+            }
+        }
+    }
+    
     // Method to set a random image
     public String setImage() {
         String[] images = new String[10];
@@ -392,19 +456,8 @@ public class AudioManager extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             LaunchUI ui = WindowManager.getLaunchUI();
-            
-            Path audioPath = Paths.get("AudioFiles", "chill.wav");
-            String inputFilePath = audioPath.toString();
-            AudioManager songFile = new AudioManager();
-            String fileType = songFile.getFileType(inputFilePath);
-            
-            songFile.setSong(inputFilePath, fileType);
-            
             WindowManager.setCurrentWindow(ui);
             ui.setLocationRelativeTo(null);
-            ui.connect(inputFilePath);
-            ui.setSongInfo("Welcome To the Audio Player!", "", songFile.setImage(), (int) songFile.getLength(inputFilePath, fileType));
         });
     }
 }
-

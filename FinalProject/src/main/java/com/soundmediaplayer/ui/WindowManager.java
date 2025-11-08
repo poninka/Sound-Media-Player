@@ -61,8 +61,15 @@ public class WindowManager {
      */
     public static void showAudioManager() {
         AudioManager am = getAudioManager();
-        setCurrentWindow(am);
-        am.setLocationRelativeTo(null);
+        LaunchUI anchor = getLaunchUI();
+        if (anchor != null && anchor.isShowing()) {
+            am.setLocationRelativeTo(anchor);
+        } else {
+            am.setLocationRelativeTo(null);
+        }
+        am.setVisible(true);
+        am.toFront();
+        am.requestFocus();
     }
 
     /**
@@ -83,4 +90,3 @@ public class WindowManager {
         ui.setLocationRelativeTo(null);
     }
 }
-
