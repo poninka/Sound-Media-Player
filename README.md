@@ -50,34 +50,28 @@ FinalProject/
 
 ### Installation
 
-1. Clone the repository:
+1. Download the lastest release of SounMediaPlayer.jar run the program in the JVM.
+Alternatively compile source by first cloning the repository:
    ```bash
    git clone <repository-url>
    cd Sound-Media-Player/FinalProject
    ```
-
-2. Configure Spotify API credentials:
-   - Copy `src/main/resources/config.properties.example` to `src/main/resources/config.properties`
-   - Fill in your Spotify Client ID and Client Secret:
-     ```
-     spotify.client.id=your_client_id_here
-     spotify.client.secret=your_client_secret_here
-     ```
-   - Alternatively, you can configure tokens at runtime using the "Configure API Tokens" button in the Spotify search UI
-
-3. Build the project:
+   Build the project:
    ```bash
    mvn clean compile
    ```
 
-4. Run the application:
-   ```bash
-   mvn exec:java -Dexec.mainClass="com.soundmediaplayer.ui.AudioManager"
-   ```
-   Or, from the repository root, you can launch the already-packaged executable:
+2. Run the application:
    ```bash
    java -jar Builds/SoundMediaPlayer.jar
    ```
+   Or, from the repository root, you can launch it with Maven:
+   ```bash
+   java -jar Builds/SoundMediaPlayer.jar
+   mvn exec:java -Dexec.mainClass="com.soundmediaplayer.ui.AudioManager"
+   ```
+   
+3. Configure Spotify API credentials you can configure tokens at runtime using the "Configure API Tokens" button in the Spotify search UI
 
 ## Usage
 
