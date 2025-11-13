@@ -53,7 +53,7 @@ FinalProject/
 1. Download the lastest release of SounMediaPlayer.jar run the program in the JVM.
 Alternatively compile source by first cloning the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/poninka/Sound-Media-Player
    cd Sound-Media-Player/FinalProject
    ```
    Build the project:
