@@ -113,7 +113,7 @@ mvn checkstyle:check
 
 ## Development
 
-This project was developed collaboratively by a 3-person team using Git and GitHub for version control. The application demonstrates:
+This project was developed collaboratively by a 5-person team using Git and GitHub for version control. The application demonstrates:
 
 - Object-oriented design principles
 - API integration and authentication
