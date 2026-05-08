@@ -30,7 +30,7 @@ cd FinalProject
 mvn clean package -Dcheckstyle.skip=true -DskipTests
 ```
 
-The JAR will be created in the `../Builds/` directory.
+The JAR will be created in the `../builds/` directory.
 
 ## Features
 
@@ -62,3 +62,4 @@ If the application doesn't start:
 - Make sure you're using Java 21 or higher
 - Check that the JAR file isn't corrupted
 - Try running from the command line to see error messages
+
